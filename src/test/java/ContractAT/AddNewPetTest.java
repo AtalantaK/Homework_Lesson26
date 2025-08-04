@@ -20,8 +20,8 @@ public class AddNewPetTest {
     private static Request request;
     private static Response response;
     private static final Path FILEPATH = Path.of("src/test/java/JSONfiles/NewPetRequestBody.json");
+    private static MediaType mediaType;
 
-    // Создаём интерсептор
     private static final HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
 
     @BeforeAll
@@ -29,12 +29,12 @@ public class AddNewPetTest {
         System.out.println("Запускаю тесты");
         logging.setLevel(HttpLoggingInterceptor.Level.BODY); // Логировать всё: заголовки + тело
         httpClient = new OkHttpClient.Builder().addInterceptor(logging).build();
+        mediaType = MediaType.get("application/json");
     }
 
     @Test
     public void addNewPetCheckStatusCode() throws IOException {
         String stringBody = Files.readString(FILEPATH);
-        MediaType mediaType = MediaType.get("application/json");
 
         RequestBody requestBody = RequestBody.create(stringBody, mediaType);
         request = new Request.Builder().url(URL).post(requestBody).build();
@@ -47,7 +47,6 @@ public class AddNewPetTest {
     @Test
     public void addNewPetCheckResponseBody() throws IOException {
         String stringBody = Files.readString(FILEPATH);
-        MediaType mediaType = MediaType.get("application/json");
 
         RequestBody requestBody = RequestBody.create(stringBody, mediaType);
         request = new Request.Builder().url(URL).post(requestBody).build();
@@ -68,7 +67,6 @@ public class AddNewPetTest {
     @Test
     public void addNewPetWithoutName() throws IOException {
         String stringBody = Files.readString(Path.of("src/test/java/JSONfiles/NewPetWithoutNameRequestBody.json"));
-        MediaType mediaType = MediaType.get("application/json");
 
         RequestBody requestBody = RequestBody.create(stringBody, mediaType);
         request = new Request.Builder().url(URL).post(requestBody).build();
@@ -81,7 +79,6 @@ public class AddNewPetTest {
     @Test
     public void addNewPetWithoutPhotoUrls() throws IOException {
         String stringBody = Files.readString(Path.of("src/test/java/JSONfiles/NewPetWithoutPhotoUrlsRequestBody.json"));
-        MediaType mediaType = MediaType.get("application/json");
 
         RequestBody requestBody = RequestBody.create(stringBody, mediaType);
         request = new Request.Builder().url(URL).post(requestBody).build();
@@ -94,7 +91,6 @@ public class AddNewPetTest {
     @Test
     public void addNewPetWithOnlyMandatoryParameters() throws IOException {
         String stringBody = Files.readString(Path.of("src/test/java/JSONfiles/NewPetWithOnlyMandatoryParametersRequestBody.json"));
-        MediaType mediaType = MediaType.get("application/json");
 
         RequestBody requestBody = RequestBody.create(stringBody, mediaType);
         request = new Request.Builder().url(URL).post(requestBody).build();
