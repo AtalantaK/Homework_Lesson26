@@ -1,0 +1,19 @@
+{
+  "id": 40820251001,
+  "category": {
+    "id": 40820251002,
+    "name": "dogs"
+  },
+  "name": "Bobik",
+  "tags": [
+    {
+      "id": 408202501,
+      "name": "dog"
+    },
+    {
+      "id": 408202502,
+      "name": "adult"
+    }
+  ],
+  "status": "available"
+}
