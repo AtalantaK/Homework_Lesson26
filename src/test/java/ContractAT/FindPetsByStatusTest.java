@@ -1,5 +1,6 @@
 package ContractAT;
 
+import helpers.URLs;
 import okhttp3.*;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.json.JSONArray;
@@ -17,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class FindPetsByStatusTest {
 
-    public static String URL = "https://petstore.swagger.io/v2/pet/findByStatus?status=";
     private static OkHttpClient httpClient;
     private static Request request;
     private static Response response;
@@ -34,7 +34,7 @@ public class FindPetsByStatusTest {
     @ParameterizedTest
     @ValueSource(strings = {"available", "pending", "sold"})
     public void findPetsByStatusCheckStatusCode(String status) throws IOException {
-        String testURL = URL + status;
+        String testURL = URLs.PETURL + URLs.FINDPETBYSTATUS + status;
 
         request = new Request.Builder().url(testURL).get().build();
         response = httpClient.newCall(request).execute();
@@ -46,7 +46,7 @@ public class FindPetsByStatusTest {
     @ParameterizedTest
     @ValueSource(strings = {"available", "pending", "sold"})
     public void findPetsByStatusCheckResponse(String status) throws IOException {
-        String testURL = URL + status;
+        String testURL = URLs.PETURL + URLs.FINDPETBYSTATUS + status;
 
         request = new Request.Builder().url(testURL).get().build();
         response = httpClient.newCall(request).execute();
@@ -64,7 +64,7 @@ public class FindPetsByStatusTest {
 
     @Test
     public void findPetsByInvalidStatusValue() throws IOException {
-        String testURL = URL + "status";
+        String testURL = URLs.PETURL + URLs.FINDPETBYSTATUS + "status";
 
         request = new Request.Builder().url(testURL).get().build();
         response = httpClient.newCall(request).execute();

@@ -2,6 +2,7 @@ package ContractAT;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import helpers.URLs;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class AddNewPetTest {
 
-    public static final String URL = "https://petstore.swagger.io/v2/pet";
     private static OkHttpClient httpClient;
     private static Request request;
     private static Response response;
@@ -37,7 +37,7 @@ public class AddNewPetTest {
         String stringBody = Files.readString(FILEPATH);
 
         RequestBody requestBody = RequestBody.create(stringBody, mediaType);
-        request = new Request.Builder().url(URL).post(requestBody).build();
+        request = new Request.Builder().url(URLs.PETURL).post(requestBody).build();
         response = httpClient.newCall(request).execute();
 
         int statusCode = response.code();
@@ -49,19 +49,19 @@ public class AddNewPetTest {
         String stringBody = Files.readString(FILEPATH);
 
         RequestBody requestBody = RequestBody.create(stringBody, mediaType);
-        request = new Request.Builder().url(URL).post(requestBody).build();
+        request = new Request.Builder().url(URLs.PETURL).post(requestBody).build();
         response = httpClient.newCall(request).execute();
 
         ObjectMapper mapper = new ObjectMapper();
         Object json = mapper.readValue(response.body().string(), Object.class);
         ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
-        String responseBody = writer.writeValueAsString(json);
+        String actualResponseBody = writer.writeValueAsString(json);
 
         json = mapper.readValue(stringBody, Object.class);
         writer = mapper.writerWithDefaultPrettyPrinter();
         String expectedResponseBody = writer.writeValueAsString(json);
 
-        assertThat(responseBody).isEqualTo(expectedResponseBody);
+        assertThat(actualResponseBody).isEqualTo(expectedResponseBody);
     }
 
     @Test
@@ -69,7 +69,7 @@ public class AddNewPetTest {
         String stringBody = Files.readString(Path.of("src/test/java/JSONfiles/NewPetWithoutNameRequestBody.json"));
 
         RequestBody requestBody = RequestBody.create(stringBody, mediaType);
-        request = new Request.Builder().url(URL).post(requestBody).build();
+        request = new Request.Builder().url(URLs.PETURL).post(requestBody).build();
         response = httpClient.newCall(request).execute();
 
         int statusCode = response.code();
@@ -81,7 +81,7 @@ public class AddNewPetTest {
         String stringBody = Files.readString(Path.of("src/test/java/JSONfiles/NewPetWithoutPhotoUrlsRequestBody.json"));
 
         RequestBody requestBody = RequestBody.create(stringBody, mediaType);
-        request = new Request.Builder().url(URL).post(requestBody).build();
+        request = new Request.Builder().url(URLs.PETURL).post(requestBody).build();
         response = httpClient.newCall(request).execute();
 
         int statusCode = response.code();
@@ -93,7 +93,7 @@ public class AddNewPetTest {
         String stringBody = Files.readString(Path.of("src/test/java/JSONfiles/NewPetWithOnlyMandatoryParametersRequestBody.json"));
 
         RequestBody requestBody = RequestBody.create(stringBody, mediaType);
-        request = new Request.Builder().url(URL).post(requestBody).build();
+        request = new Request.Builder().url(URLs.PETURL).post(requestBody).build();
         response = httpClient.newCall(request).execute();
 
         int statusCode = response.code();
