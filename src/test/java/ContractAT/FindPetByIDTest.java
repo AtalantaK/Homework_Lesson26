@@ -21,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class FindPetByIDTest {
 
+    //todo: переделать
+
     private static OkHttpClient httpClient;
     private static Request request;
     private static Response response;
@@ -37,7 +39,8 @@ public class FindPetByIDTest {
 
     @Test
     public void FindPetByIDCheckStatusCode() throws IOException {
-        response = UsefulMethods.addNewPet();
+//        response = UsefulMethods.addNewPet();
+        //todo
         String responseBody = response.body().string();
         JSONObject jsonObject = new JSONObject(responseBody);
         long actualID = jsonObject.getLong("id");
@@ -51,7 +54,8 @@ public class FindPetByIDTest {
 
     @Test
     public void FindPetByIDCheckResponse() throws IOException {
-        response = UsefulMethods.addNewPet();
+//        response = UsefulMethods.addNewPet();
+        //todo
         String responseBody = response.body().string();
         JSONObject jsonObject = new JSONObject(responseBody);
         long actualID = jsonObject.getLong("id");

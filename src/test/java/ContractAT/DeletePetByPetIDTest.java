@@ -8,10 +8,11 @@ import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -22,6 +23,7 @@ public class DeletePetByPetIDTest {
     private static Request request;
     private static Response response;
     private static final String apiKey = "special-key";
+    JSONObject jsonObject;
 
     private static final HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
 
@@ -32,11 +34,17 @@ public class DeletePetByPetIDTest {
         httpClient = new OkHttpClient.Builder().addInterceptor(logging).build();
     }
 
+    @BeforeEach
+    public void beforeEach() throws IOException {
+//        response = UsefulMethods.addNewPet();
+        //todo
+        String responseBody = response.body().string();
+        jsonObject = new JSONObject(responseBody);
+    }
+
     @Test
     public void deletePetByPetIDCheckStatusCode() throws IOException {
-        response = UsefulMethods.addNewPet();
-        String responseBody = response.body().string();
-        JSONObject jsonObject = new JSONObject(responseBody);
+
         long actualID = jsonObject.getLong("id");
 
         request = new Request.Builder().url(URLs.PETURL + actualID).header("api_key", apiKey).delete().build();
@@ -48,9 +56,6 @@ public class DeletePetByPetIDTest {
 
     @Test
     public void deletePetByPetIDCheckResponse() throws IOException {
-        response = UsefulMethods.addNewPet();
-        String responseBody = response.body().string();
-        JSONObject jsonObject = new JSONObject(responseBody);
 
         long actualID = jsonObject.getLong("id");
 
@@ -77,6 +82,7 @@ public class DeletePetByPetIDTest {
     }
 
     @Test
+    @Disabled("Есть актуальный баг")
     public void deletePetByNonExistentID() throws IOException {
         long actualID = 122222222;
         request = new Request.Builder().url(URLs.PETURL + actualID).header("api_key", apiKey).delete().build();

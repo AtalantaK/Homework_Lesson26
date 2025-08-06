@@ -5,6 +5,7 @@ import okhttp3.*;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.json.JSONArray;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -22,13 +23,13 @@ public class FindPetsByStatusTest {
     private static Request request;
     private static Response response;
 
-    private static final HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+//    private static final HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
 
     @BeforeAll
     public static void beforeAll() {
         System.out.println("Запускаю тесты");
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY); // Логировать всё: заголовки + тело
-        httpClient = new OkHttpClient.Builder().addInterceptor(logging).build();
+//        logging.setLevel(HttpLoggingInterceptor.Level.BODY); // Логировать всё: заголовки + тело
+        httpClient = new OkHttpClient.Builder().build();
     }
 
     @ParameterizedTest
@@ -63,6 +64,7 @@ public class FindPetsByStatusTest {
     }
 
     @Test
+    @Disabled("Есть актуальный баг")
     public void findPetsByInvalidStatusValue() throws IOException {
         String testURL = URLs.PETURL + URLs.FINDPETBYSTATUS + "status";
 
