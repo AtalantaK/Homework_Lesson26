@@ -7,25 +7,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import helpers.URLs;
 import helpers.UsefulMethods;
-import okhttp3.logging.HttpLoggingInterceptor;
 import org.json.JSONObject;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import okhttp3.*;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("Добавить питомца")
 public class AddNewPetTest {
-
-    //todo: переделать
 
     private static OkHttpClient httpClient;
     private static Request request;
@@ -45,13 +41,14 @@ public class AddNewPetTest {
     }
 
     @Test
+    @DisplayName("Проверить статус код")
     public void addNewPetCheckStatusCode() throws IOException {
 
         Pet pet = UsefulMethods.createPetObject("pending");
         String jsonPet = objectMapper.writeValueAsString(pet);
 
         RequestBody requestBody = RequestBody.create(jsonPet, mediaType);
-        request = new Request.Builder().url(URLs.PETURL).post(requestBody).build();
+        request = new Request.Builder().url(URLs.URL).post(requestBody).build();
         response = httpClient.newCall(request).execute();
 
         int statusCode = response.code();
@@ -62,13 +59,14 @@ public class AddNewPetTest {
     }
 
     @Test
+    @DisplayName("Проверить респонс")
     public void addNewPetCheckResponseBody() throws IOException {
 
         Pet pet = UsefulMethods.createPetObject("pending");
         String jsonPet = objectMapper.writeValueAsString(pet);
 
         RequestBody requestBody = RequestBody.create(jsonPet, mediaType);
-        request = new Request.Builder().url(URLs.PETURL).post(requestBody).build();
+        request = new Request.Builder().url(URLs.URL).post(requestBody).build();
         response = httpClient.newCall(request).execute();
 
         Object json = objectMapper.readValue(response.body().string(), Object.class);
@@ -85,6 +83,7 @@ public class AddNewPetTest {
     }
 
     @Test
+    @DisplayName("Добавить питомца без имени")
     @Disabled("Есть актуальный баг")
     public void addNewPetWithoutName() throws IOException {
 
@@ -101,7 +100,7 @@ public class AddNewPetTest {
         String jsonPet = objectMapper.writeValueAsString(pet);
 
         RequestBody requestBody = RequestBody.create(jsonPet, mediaType);
-        request = new Request.Builder().url(URLs.PETURL).post(requestBody).build();
+        request = new Request.Builder().url(URLs.URL).post(requestBody).build();
         response = httpClient.newCall(request).execute();
 
         int statusCode = response.code();
@@ -112,6 +111,7 @@ public class AddNewPetTest {
     }
 
     @Test
+    @DisplayName("Добавить питомца без ссылки на фото")
     @Disabled("Есть актуальный баг")
     public void addNewPetWithoutPhotoUrls() throws IOException {
 
@@ -125,7 +125,7 @@ public class AddNewPetTest {
         String jsonPet = objectMapper.writeValueAsString(pet);
 
         RequestBody requestBody = RequestBody.create(jsonPet, mediaType);
-        request = new Request.Builder().url(URLs.PETURL).post(requestBody).build();
+        request = new Request.Builder().url(URLs.URL).post(requestBody).build();
         response = httpClient.newCall(request).execute();
 
         int statusCode = response.code();
@@ -136,6 +136,7 @@ public class AddNewPetTest {
     }
 
     @Test
+    @DisplayName("Добавить питомца только с мандаторными параметрами")
     public void addNewPetWithOnlyMandatoryParameters() throws IOException {
 
         List<String> photoUrls = new ArrayList<>();
@@ -148,7 +149,7 @@ public class AddNewPetTest {
 
 
         RequestBody requestBody = RequestBody.create(jsonPet, mediaType);
-        request = new Request.Builder().url(URLs.PETURL).post(requestBody).build();
+        request = new Request.Builder().url(URLs.URL).post(requestBody).build();
         response = httpClient.newCall(request).execute();
 
         int statusCode = response.code();

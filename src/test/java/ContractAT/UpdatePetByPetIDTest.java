@@ -1,13 +1,10 @@
 package ContractAT;
 
-import Models.Category;
 import Models.Pet;
 import Models.ResponseBody;
-import Models.Tag;
 import helpers.URLs;
 import helpers.UsefulMethods;
 import okhttp3.*;
-import okhttp3.logging.HttpLoggingInterceptor;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,8 +14,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -31,13 +26,13 @@ public class UpdatePetByPetIDTest {
     JSONObject jsonObject;
 //    private static long currentID;
 
-    private static final HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+//    private static final HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
 
     @BeforeAll
     public static void beforeAll() {
         System.out.println("Запускаю тесты");
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY); // Логировать всё: заголовки + тело
-        httpClient = new OkHttpClient.Builder().addInterceptor(logging).build();
+//        logging.setLevel(HttpLoggingInterceptor.Level.BODY); // Логировать всё: заголовки + тело
+        httpClient = new OkHttpClient.Builder().build();
     }
 
     @BeforeEach
@@ -70,7 +65,7 @@ public class UpdatePetByPetIDTest {
                 .add("status", newStatus)
                 .build();
 
-        request = new Request.Builder().url(URLs.PETURL + currentID).post(formBody).build();
+        request = new Request.Builder().url(URLs.URL + currentID).post(formBody).build();
         response = httpClient.newCall(request).execute();
 
         int statusCode = response.code();
@@ -105,7 +100,7 @@ public class UpdatePetByPetIDTest {
                 .add("status", newStatus)
                 .build();
 
-        request = new Request.Builder().url(URLs.PETURL + currentID).post(formBody).build();
+        request = new Request.Builder().url(URLs.URL + currentID).post(formBody).build();
         response = httpClient.newCall(request).execute();
 
         jsonObject = new JSONObject(response.body().string());
@@ -137,7 +132,7 @@ public class UpdatePetByPetIDTest {
                 .add("status", "available")
                 .build();
 
-        request = new Request.Builder().url(URLs.PETURL + 999999999999L).post(formBody).build();
+        request = new Request.Builder().url(URLs.URL + 999999999999L).post(formBody).build();
         response = httpClient.newCall(request).execute();
 
         jsonObject = new JSONObject(response.body().string());
@@ -177,7 +172,7 @@ public class UpdatePetByPetIDTest {
                 .add("status", "newStatus")
                 .build();
 
-        request = new Request.Builder().url(URLs.PETURL + currentID).post(formBody).build();
+        request = new Request.Builder().url(URLs.URL + currentID).post(formBody).build();
         response = httpClient.newCall(request).execute();
 
         int statusCode = response.code();

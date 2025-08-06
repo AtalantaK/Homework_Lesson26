@@ -1,7 +1,6 @@
 package ContractAT;
 
 import helpers.URLs;
-import helpers.UsefulMethods;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -47,7 +46,7 @@ public class DeletePetByPetIDTest {
 
         long actualID = jsonObject.getLong("id");
 
-        request = new Request.Builder().url(URLs.PETURL + actualID).header("api_key", apiKey).delete().build();
+        request = new Request.Builder().url(URLs.URL + actualID).header("api_key", apiKey).delete().build();
         response = httpClient.newCall(request).execute();
 
         int statusCode = response.code();
@@ -59,7 +58,7 @@ public class DeletePetByPetIDTest {
 
         long actualID = jsonObject.getLong("id");
 
-        request = new Request.Builder().url(URLs.PETURL + actualID).header("api_key", apiKey).delete().build();
+        request = new Request.Builder().url(URLs.URL + actualID).header("api_key", apiKey).delete().build();
         response = httpClient.newCall(request).execute();
 
         jsonObject = new JSONObject(response.body().string());
@@ -85,7 +84,7 @@ public class DeletePetByPetIDTest {
     @Disabled("Есть актуальный баг")
     public void deletePetByNonExistentID() throws IOException {
         long actualID = 122222222;
-        request = new Request.Builder().url(URLs.PETURL + actualID).header("api_key", apiKey).delete().build();
+        request = new Request.Builder().url(URLs.URL + actualID).header("api_key", apiKey).delete().build();
         response = httpClient.newCall(request).execute();
 
         int statusCode = response.code();

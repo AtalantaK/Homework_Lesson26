@@ -5,11 +5,8 @@ import Models.Pet;
 import Models.Tag;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +27,7 @@ public class UsefulMethods {
         String jsonPet = objectMapper.writeValueAsString(pet);
 
         RequestBody requestBody = RequestBody.create(jsonPet, mediaType);
-        request = new Request.Builder().url(URLs.PETURL).post(requestBody).build();
+        request = new Request.Builder().url(URLs.URL).post(requestBody).build();
         response = httpClient.newCall(request).execute();
 
         System.out.println(requestBody);
@@ -40,7 +37,7 @@ public class UsefulMethods {
 
     public static Response findPetsByStatus(String status) throws IOException {
 
-        request = new Request.Builder().url(URLs.PETURL + URLs.FINDPETBYSTATUS + status).get().build();
+        request = new Request.Builder().url(URLs.URL + URLs.FINDPETBYSTATUS + status).get().build();
         response = httpClient.newCall(request).execute();
 
         return response;
@@ -48,7 +45,7 @@ public class UsefulMethods {
 
     public static Response findPetByID(long id) throws IOException {
 
-        request = new Request.Builder().url(URLs.PETURL + id).get().build();
+        request = new Request.Builder().url(URLs.URL + id).get().build();
         response = httpClient.newCall(request).execute();
 
         return response;
@@ -56,7 +53,7 @@ public class UsefulMethods {
 
     public static void deletePetByPetID(long petID) throws IOException {
 
-        request = new Request.Builder().url(URLs.PETURL + petID).header("api_key", apiKey).delete().build();
+        request = new Request.Builder().url(URLs.URL + petID).header("api_key", apiKey).delete().build();
         response = httpClient.newCall(request).execute();
     }
 

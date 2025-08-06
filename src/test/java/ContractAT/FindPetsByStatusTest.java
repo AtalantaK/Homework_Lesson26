@@ -2,7 +2,6 @@ package ContractAT;
 
 import helpers.URLs;
 import okhttp3.*;
-import okhttp3.logging.HttpLoggingInterceptor;
 import org.json.JSONArray;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -35,7 +34,7 @@ public class FindPetsByStatusTest {
     @ParameterizedTest
     @ValueSource(strings = {"available", "pending", "sold"})
     public void findPetsByStatusCheckStatusCode(String status) throws IOException {
-        String testURL = URLs.PETURL + URLs.FINDPETBYSTATUS + status;
+        String testURL = URLs.URL + URLs.FINDPETBYSTATUS + status;
 
         request = new Request.Builder().url(testURL).get().build();
         response = httpClient.newCall(request).execute();
@@ -47,7 +46,7 @@ public class FindPetsByStatusTest {
     @ParameterizedTest
     @ValueSource(strings = {"available", "pending", "sold"})
     public void findPetsByStatusCheckResponse(String status) throws IOException {
-        String testURL = URLs.PETURL + URLs.FINDPETBYSTATUS + status;
+        String testURL = URLs.URL + URLs.FINDPETBYSTATUS + status;
 
         request = new Request.Builder().url(testURL).get().build();
         response = httpClient.newCall(request).execute();
@@ -66,7 +65,7 @@ public class FindPetsByStatusTest {
     @Test
     @Disabled("Есть актуальный баг")
     public void findPetsByInvalidStatusValue() throws IOException {
-        String testURL = URLs.PETURL + URLs.FINDPETBYSTATUS + "status";
+        String testURL = URLs.URL + URLs.FINDPETBYSTATUS + "status";
 
         request = new Request.Builder().url(testURL).get().build();
         response = httpClient.newCall(request).execute();

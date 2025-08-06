@@ -3,7 +3,6 @@ package ContractAT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import helpers.URLs;
-import helpers.UsefulMethods;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -45,7 +44,7 @@ public class FindPetByIDTest {
         JSONObject jsonObject = new JSONObject(responseBody);
         long actualID = jsonObject.getLong("id");
 
-        request = new Request.Builder().url(URLs.PETURL + actualID).get().build();
+        request = new Request.Builder().url(URLs.URL + actualID).get().build();
         response = httpClient.newCall(request).execute();
 
         int statusCode = response.code();
@@ -60,7 +59,7 @@ public class FindPetByIDTest {
         JSONObject jsonObject = new JSONObject(responseBody);
         long actualID = jsonObject.getLong("id");
 
-        request = new Request.Builder().url(URLs.PETURL + actualID).get().build();
+        request = new Request.Builder().url(URLs.URL + actualID).get().build();
         response = httpClient.newCall(request).execute();
 
         ObjectMapper mapper = new ObjectMapper();
@@ -80,7 +79,7 @@ public class FindPetByIDTest {
     public void FindPetByNonExistentID() throws IOException {
         long actualID = 1444444444;
 
-        request = new Request.Builder().url(URLs.PETURL + actualID).get().build();
+        request = new Request.Builder().url(URLs.URL + actualID).get().build();
         response = httpClient.newCall(request).execute();
 
         int statusCode = response.code();
