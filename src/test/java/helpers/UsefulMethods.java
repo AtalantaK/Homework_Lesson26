@@ -3,6 +3,7 @@ package helpers;
 import Models.Category;
 import Models.Pet;
 import Models.Tag;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 
@@ -51,10 +52,12 @@ public class UsefulMethods {
         return response;
     }
 
-    public static void deletePetByPetID(long petID) throws IOException {
+    public static Response deletePetByPetID(long petID) throws IOException {
 
         request = new Request.Builder().url(URLs.URL + petID).header("api_key", apiKey).delete().build();
         response = httpClient.newCall(request).execute();
+
+        return response;
     }
 
     public static Pet createPetObject(String status) {
@@ -82,6 +85,37 @@ public class UsefulMethods {
         response = httpClient.newCall(request).execute();
 
 //        System.out.println(response.body().string());
+    }
+
+    public static Response updateExistingPet(long id) throws IOException {
+        Category category = new Category(80820251002L, "new_category");
+        List<String> photoUrls = new ArrayList<>();
+        photoUrls.add("https://test.kz/");
+        photoUrls.add("https://www.newsite.com/");
+        List<Tag> tags = new ArrayList<>();
+        tags.add(new Tag("new_tag", 808202501));
+
+        Pet updatedPet = new Pet(id, category, "updated", photoUrls, tags, "sold");
+        String jsonPet = objectMapper.writeValueAsString(updatedPet);
+
+        RequestBody requestBody = RequestBody.create(jsonPet, mediaType);
+        request = new Request.Builder().url(URLs.URL).put(requestBody).build();
+        response = httpClient.newCall(request).execute();
+
+        return response;
+    }
+
+    public static Response updatePetByPetID(long id) throws IOException {
+
+        RequestBody formBody = new FormBody.Builder()
+                .add("name", "New_Name")
+                .add("status", "pending")
+                .build();
+
+        request = new Request.Builder().url(URLs.URL + id).post(formBody).build();
+        response = httpClient.newCall(request).execute();
+
+        return response;
     }
 
 }

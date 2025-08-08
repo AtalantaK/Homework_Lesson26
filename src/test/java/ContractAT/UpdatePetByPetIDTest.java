@@ -14,8 +14,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
+@DisplayName("Обновить животное по айди")
 public class UpdatePetByPetIDTest {
     private static OkHttpClient httpClient;
     private static Request request;
@@ -32,6 +32,7 @@ public class UpdatePetByPetIDTest {
         httpClient = new OkHttpClient.Builder().build();
     }
 
+    @DisplayName("Проверить статус код")
     @ParameterizedTest
     @CsvSource({
             "available, pending",
@@ -67,6 +68,8 @@ public class UpdatePetByPetIDTest {
         assertThat(statusCode).isEqualTo(200);
     }
 
+
+    @DisplayName("Проверить респонс")
     @ParameterizedTest
     @CsvSource({
             "available, pending",
@@ -107,6 +110,7 @@ public class UpdatePetByPetIDTest {
     }
 
     @Test
+    @DisplayName("Обновить животное с несуществующим айди")
     public void updatePetByPetIDWithNonExistentID() throws IOException {
 
         RequestBody formBody = new FormBody.Builder()
@@ -127,6 +131,7 @@ public class UpdatePetByPetIDTest {
     }
 
     @Test
+    @DisplayName("Обновить животное с несуществующим статусом")
     @Disabled("Есть актуальный баг")
     public void updatePetByPetIDWithNonExistenceStatus() throws IOException {
 
