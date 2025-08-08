@@ -1,31 +1,31 @@
 package ContractAT;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import Models.Pet;
+import Models.ResponseBody;
+import com.google.gson.Gson;
 import helpers.URLs;
+import helpers.UsefulMethods;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.json.JSONObject;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
+@DisplayName("Найти животное по айди")
 public class FindPetByIDTest {
-
-    //todo: переделать
 
     private static OkHttpClient httpClient;
     private static Request request;
     private static Response response;
-    private static final Path FILEPATH = Path.of("src/test/java/JSONfiles/NewPetRequestBody.json");
+    private static long erasableID;
 
     private static final HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
 
@@ -37,9 +37,11 @@ public class FindPetByIDTest {
     }
 
     @Test
+    @DisplayName("Проверить статус код")
     public void FindPetByIDCheckStatusCode() throws IOException {
-//        response = UsefulMethods.addNewPet();
-        //todo
+        Pet pet = UsefulMethods.createPetObject("available");
+        response = UsefulMethods.addNewPet(pet);
+
         String responseBody = response.body().string();
         JSONObject jsonObject = new JSONObject(responseBody);
         long actualID = jsonObject.getLong("id");
@@ -48,13 +50,18 @@ public class FindPetByIDTest {
         response = httpClient.newCall(request).execute();
 
         int statusCode = response.code();
+
+        erasableID = actualID;
+
         assertThat(statusCode).isEqualTo(200);
     }
 
     @Test
+    @DisplayName("Проверить респонс")
     public void FindPetByIDCheckResponse() throws IOException {
-//        response = UsefulMethods.addNewPet();
-        //todo
+        Pet expectedPet = UsefulMethods.createPetObject("available");
+        response = UsefulMethods.addNewPet(expectedPet);
+
         String responseBody = response.body().string();
         JSONObject jsonObject = new JSONObject(responseBody);
         long actualID = jsonObject.getLong("id");
@@ -62,43 +69,34 @@ public class FindPetByIDTest {
         request = new Request.Builder().url(URLs.URL + actualID).get().build();
         response = httpClient.newCall(request).execute();
 
-        ObjectMapper mapper = new ObjectMapper();
-        Object json = mapper.readValue(response.body().string(), Object.class);
-        ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
-        String actualResponseBody = writer.writeValueAsString(json);
+        responseBody = response.body().string();
+        Gson gson = new Gson();
+        Pet actualResponseBody = gson.fromJson(responseBody, Pet.class);
 
-        String stringBody = Files.readString(FILEPATH);
-        json = mapper.readValue(stringBody, Object.class);
-        writer = mapper.writerWithDefaultPrettyPrinter();
-        String expectedResponseBody = writer.writeValueAsString(json);
+        erasableID = actualID;
 
-        assertThat(actualResponseBody).isEqualTo(expectedResponseBody);
+        assertThat(actualResponseBody).isEqualTo(expectedPet);
     }
 
     @Test
+    @DisplayName("Найти животное с несуществующим айди")
     public void FindPetByNonExistentID() throws IOException {
         long actualID = 1444444444;
 
         request = new Request.Builder().url(URLs.URL + actualID).get().build();
         response = httpClient.newCall(request).execute();
 
-        int statusCode = response.code();
         String responseBody = response.body().string();
-        JSONObject jsonObject = new JSONObject(responseBody);
 
-        String actualResponseMessage = jsonObject.getString("message");
-        String expectedResponseMessage = "Pet not found";
+        Gson gson = new Gson();
+        ResponseBody actualResponseBody = gson.fromJson(responseBody, ResponseBody.class);
+        ResponseBody expectedResponseBody = new ResponseBody(1, "error", "Pet not found");
 
-        int actualResponseCode = jsonObject.getInt("code");
-        int expectedResponseCode = 1;
+        assertThat(actualResponseBody).isEqualTo(expectedResponseBody);
+    }
 
-        String actualResponseError = jsonObject.getString("type");
-        String expectedResponseError = "error";
-
-        assertAll("Несколько проверок",
-                () -> assertThat(statusCode).isEqualTo(404),
-                () -> assertThat(actualResponseCode).isEqualTo(expectedResponseCode),
-                () -> assertThat(actualResponseError).isEqualTo(expectedResponseError),
-                () -> assertThat(actualResponseMessage).isEqualTo(expectedResponseMessage));
+    @AfterEach
+    public void deletePet() throws IOException {
+        UsefulMethods.deletePetByPetID(erasableID);
     }
 }

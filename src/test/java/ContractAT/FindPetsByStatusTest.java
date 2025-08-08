@@ -1,21 +1,30 @@
 package ContractAT;
 
+import Models.Pet;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import helpers.URLs;
 import okhttp3.*;
 import org.json.JSONArray;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.json.JSONObject;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+@DisplayName("Найти животных по статусу")
 public class FindPetsByStatusTest {
 
     private static OkHttpClient httpClient;
@@ -31,6 +40,7 @@ public class FindPetsByStatusTest {
         httpClient = new OkHttpClient.Builder().build();
     }
 
+    @DisplayName("Проверить статус код")
     @ParameterizedTest
     @ValueSource(strings = {"available", "pending", "sold"})
     public void findPetsByStatusCheckStatusCode(String status) throws IOException {
@@ -43,6 +53,7 @@ public class FindPetsByStatusTest {
         assertThat(statusCode).isEqualTo(200);
     }
 
+    @DisplayName("Проверить респонс")
     @ParameterizedTest
     @ValueSource(strings = {"available", "pending", "sold"})
     public void findPetsByStatusCheckResponse(String status) throws IOException {
@@ -52,17 +63,18 @@ public class FindPetsByStatusTest {
         response = httpClient.newCall(request).execute();
 
         String responseBody = response.body().string();
-        JSONArray jsonArray = new JSONArray(responseBody);
-        String actualStatus;
 
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-            actualStatus = jsonObject.getString("status");
-            assertThat(actualStatus).isEqualTo(status);
+        Gson gson = new Gson();
+        Pet[] pets = gson.fromJson(responseBody, Pet[].class);
+
+        for (Pet pet : pets) {
+            assertThat(pet.getStatus()).isEqualTo(status);
         }
+
     }
 
     @Test
+    @DisplayName("Найти животных по несуществующему статусу")
     @Disabled("Есть актуальный баг")
     public void findPetsByInvalidStatusValue() throws IOException {
         String testURL = URLs.URL + URLs.FINDPETBYSTATUS + "status";
@@ -72,8 +84,6 @@ public class FindPetsByStatusTest {
 
         int statusCode = response.code();
 
-        assertAll("Несколько проверок",
-                () -> assertThat(statusCode).isEqualTo(400),
-                () -> assertThat(response.body().string()).isEqualTo("Invalid status value"));
+        assertThat(statusCode).isEqualTo(400);
     }
 }

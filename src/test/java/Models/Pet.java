@@ -1,6 +1,10 @@
 package Models;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.List;
+import java.util.Objects;
 
 public class Pet {
     private long id;
@@ -86,5 +90,29 @@ public class Pet {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "Pet {" +
+                "id = " + id +
+                ", category = " + category +
+                ", name ='" + name + '\'' +
+                ", photoUrls = " + photoUrls +
+                ", tags = " + tags +
+                ", status = '" + status + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Pet pet = (Pet) o;
+        return id == pet.id && Objects.equals(category, pet.category) && Objects.equals(name, pet.name) && Objects.equals(photoUrls, pet.photoUrls) && Objects.equals(tags, pet.tags) && Objects.equals(status, pet.status);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, category, name, photoUrls, tags, status);
     }
 }

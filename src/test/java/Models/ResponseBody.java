@@ -1,5 +1,7 @@
 package Models;
 
+import java.util.Objects;
+
 public class ResponseBody {
     private int code;
     private String type;
@@ -33,5 +35,26 @@ public class ResponseBody {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        return "ResponseBody{" +
+                "code=" + code +
+                ", type='" + type + '\'' +
+                ", message='" + message + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ResponseBody that = (ResponseBody) o;
+        return code == that.code && Objects.equals(type, that.type) && Objects.equals(message, that.message);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(code, type, message);
     }
 }

@@ -2,6 +2,7 @@ package ContractAT;
 
 import Models.Pet;
 import Models.ResponseBody;
+import com.google.gson.Gson;
 import helpers.URLs;
 import helpers.UsefulMethods;
 import okhttp3.*;
@@ -21,9 +22,10 @@ public class UploadImageTest {
     private static OkHttpClient httpClient;
     private static Request request;
     private static Response response;
-    private static JSONObject jsonObject;
     private static MediaType mediaType;
     private static File file;
+    private static long erasableID;
+
 
 //    private static final HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
 
@@ -59,7 +61,7 @@ public class UploadImageTest {
 
         int statusCode = response.code();
 
-        UsefulMethods.deletePetByPetID(pet.getId());
+        erasableID = pet.getId();
 
         assertThat(statusCode).isEqualTo(200);
     }
@@ -84,25 +86,16 @@ public class UploadImageTest {
         request = new Request.Builder().url(URLs.URL + pet.getId() + URLs.UPLOADIMAGE).post(formBody).build();
         response = httpClient.newCall(request).execute();
 
-        jsonObject = new JSONObject(response.body().string());
+        String responseBody = response.body().string();
 
-        ResponseBody responseBody = new ResponseBody(jsonObject.getInt("code"), jsonObject.getString("type"), jsonObject.getString("message"));
+        Gson gson = new Gson();
 
-        UsefulMethods.deletePetByPetID(pet.getId());
+        ResponseBody actualResponseBody = gson.fromJson(responseBody, ResponseBody.class);
+        ResponseBody expectedResponseBody = new ResponseBody(200, "unknown", "additionalMetadata: testImage\nFile uploaded to ./petImage.png, 65713 bytes");
 
-        int actualCode = responseBody.getCode();
-        int expectedCode = 200;
+        erasableID = pet.getId();
 
-        String actualType = responseBody.getType();
-        String expectedType = "unknown";
-
-        String actualMessage = responseBody.getMessage();
-        String expectedMessage = "additionalMetadata: testImage\nFile uploaded to ./petImage.png, 65713 bytes";
-
-        assertAll("Несколько проверок",
-                () -> assertThat(actualCode).isEqualTo(expectedCode),
-                () -> assertThat(actualType).isEqualTo(expectedType),
-                () -> assertThat(actualMessage).startsWith(expectedMessage));
+        assertThat(actualResponseBody).isEqualTo(expectedResponseBody);
     }
 
     @Test
@@ -150,7 +143,7 @@ public class UploadImageTest {
 
         int statusCode = response.code();
 
-        UsefulMethods.deletePetByPetID(pet.getId());
+        erasableID = pet.getId();
 
         assertThat(statusCode).isEqualTo(400);
     }
@@ -174,25 +167,21 @@ public class UploadImageTest {
         request = new Request.Builder().url(URLs.URL + pet.getId() + URLs.UPLOADIMAGE).post(formBody).build();
         response = httpClient.newCall(request).execute();
 
-        jsonObject = new JSONObject(response.body().string());
+        String responseBody = response.body().string();
 
-        ResponseBody responseBody = new ResponseBody(jsonObject.getInt("code"), jsonObject.getString("type"), jsonObject.getString("message"));
+        Gson gson = new Gson();
 
-        UsefulMethods.deletePetByPetID(pet.getId());
+        ResponseBody actualResponseBody = gson.fromJson(responseBody, ResponseBody.class);
+        ResponseBody expectedResponseBody = new ResponseBody(200, "unknown", "additionalMetadata: null\nFile uploaded to ./petImage.png, 65713 bytes");
 
-        int actualCode = responseBody.getCode();
-        int expectedCode = 200;
+        erasableID = pet.getId();
 
-        String actualType = responseBody.getType();
-        String expectedType = "unknown";
+        assertThat(actualResponseBody).isEqualTo(expectedResponseBody);
+    }
 
-        String actualMessage = responseBody.getMessage();
-        String expectedMessage = "additionalMetadata: null\nFile uploaded to ./petImage.png, 65713 bytes";
-
-        assertAll("Несколько проверок",
-                () -> assertThat(actualCode).isEqualTo(expectedCode),
-                () -> assertThat(actualType).isEqualTo(expectedType),
-                () -> assertThat(actualMessage).startsWith(expectedMessage));
+    @AfterEach
+    public void deletePet() throws IOException {
+        UsefulMethods.deletePetByPetID(erasableID);
     }
 
 }

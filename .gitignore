@@ -39,3 +39,4 @@ build/
 .DS_Store
 
 /src/test/java/helpers/TODO_list.java
+/src/test/java/Main.java

@@ -30,7 +30,7 @@ public class UsefulMethods {
         request = new Request.Builder().url(URLs.URL).post(requestBody).build();
         response = httpClient.newCall(request).execute();
 
-        System.out.println(requestBody);
+//        System.out.println(requestBody);
 
         return response;
     }
@@ -71,17 +71,17 @@ public class UsefulMethods {
         return pet;
     }
 
-//    public static void petstoreAuth() throws IOException {
-//        String username = "test";
-//        String password = "abc123";
-//
-//        String credential = Credentials.basic(username, password);
+    public static void petstoreAuth() throws IOException {
+        String username = "test";
+        String password = "abc123";
+
+        String credential = Credentials.basic(username, password);
 //        System.out.println(credential);
-//
-//        request = new Request.Builder().url(URLs.AUTHURL).header("Authorization", credential).build();
-//        response = httpClient.newCall(request).execute();
-//
+
+        request = new Request.Builder().url(URLs.AUTHURL).header("Authorization", credential).build();
+        response = httpClient.newCall(request).execute();
+
 //        System.out.println(response.body().string());
-//    }
+    }
 
 }

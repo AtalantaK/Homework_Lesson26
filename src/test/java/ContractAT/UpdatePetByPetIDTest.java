@@ -2,14 +2,12 @@ package ContractAT;
 
 import Models.Pet;
 import Models.ResponseBody;
+import com.google.gson.Gson;
 import helpers.URLs;
 import helpers.UsefulMethods;
 import okhttp3.*;
 import org.json.JSONObject;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -22,9 +20,8 @@ public class UpdatePetByPetIDTest {
     private static OkHttpClient httpClient;
     private static Request request;
     private static Response response;
-    private static final String apiKey = "special-key";
     JSONObject jsonObject;
-//    private static long currentID;
+    private static long erasableID;
 
 //    private static final HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
 
@@ -33,11 +30,6 @@ public class UpdatePetByPetIDTest {
         System.out.println("Запускаю тесты");
 //        logging.setLevel(HttpLoggingInterceptor.Level.BODY); // Логировать всё: заголовки + тело
         httpClient = new OkHttpClient.Builder().build();
-    }
-
-    @BeforeEach
-    public void beforeEach() throws IOException {
-
     }
 
     @ParameterizedTest
@@ -70,7 +62,7 @@ public class UpdatePetByPetIDTest {
 
         int statusCode = response.code();
 
-        UsefulMethods.deletePetByPetID(pet.getId());
+        erasableID = pet.getId();
 
         assertThat(statusCode).isEqualTo(200);
     }
@@ -103,25 +95,15 @@ public class UpdatePetByPetIDTest {
         request = new Request.Builder().url(URLs.URL + currentID).post(formBody).build();
         response = httpClient.newCall(request).execute();
 
-        jsonObject = new JSONObject(response.body().string());
+        responseBody = response.body().string();
 
-        ResponseBody response = new ResponseBody(jsonObject.getInt("code"), jsonObject.getString("type"), jsonObject.getString("message"));
+        Gson gson = new Gson();
+        ResponseBody actualResponseBody = gson.fromJson(responseBody, ResponseBody.class);
+        ResponseBody expectedResponseBody = new ResponseBody(200, "unknown", "" + pet.getId());
 
-        int actualCode = response.getCode();
-        int expectedCode = 200;
+        erasableID = pet.getId();
 
-        String actualType = response.getType();
-        String expectedType = "unknown";
-
-        String actualMessage = response.getMessage();
-        String expectedMessage = "" + pet.getId();
-
-        UsefulMethods.deletePetByPetID(pet.getId());
-
-        assertAll("Несколько проверок",
-                () -> assertThat(actualCode).isEqualTo(expectedCode),
-                () -> assertThat(actualType).isEqualTo(expectedType),
-                () -> assertThat(actualMessage).isEqualTo(expectedMessage));
+        assertThat(actualResponseBody).isEqualTo(expectedResponseBody);
     }
 
     @Test
@@ -135,23 +117,13 @@ public class UpdatePetByPetIDTest {
         request = new Request.Builder().url(URLs.URL + 999999999999L).post(formBody).build();
         response = httpClient.newCall(request).execute();
 
-        jsonObject = new JSONObject(response.body().string());
+        String responseBody = response.body().string();
 
-        ResponseBody response = new ResponseBody(jsonObject.getInt("code"), jsonObject.getString("type"), jsonObject.getString("message"));
+        Gson gson = new Gson();
+        ResponseBody actualResponseBody = gson.fromJson(responseBody, ResponseBody.class);
+        ResponseBody expectedResponseBody = new ResponseBody(404, "unknown", "not found");
 
-        int actualCode = response.getCode();
-        int expectedCode = 404;
-
-        String actualType = response.getType();
-        String expectedType = "unknown";
-
-        String actualMessage = response.getMessage();
-        String expectedMessage = "not found";
-
-        assertAll("Несколько проверок",
-                () -> assertThat(actualCode).isEqualTo(expectedCode),
-                () -> assertThat(actualType).isEqualTo(expectedType),
-                () -> assertThat(actualMessage).isEqualTo(expectedMessage));
+        assertThat(actualResponseBody).isEqualTo(expectedResponseBody);
     }
 
     @Test
@@ -177,8 +149,13 @@ public class UpdatePetByPetIDTest {
 
         int statusCode = response.code();
 
-        UsefulMethods.deletePetByPetID(pet.getId());
+        erasableID = pet.getId();
 
         assertThat(statusCode).isEqualTo(405);
+    }
+
+    @AfterEach
+    public void deletePet() throws IOException {
+        UsefulMethods.deletePetByPetID(erasableID);
     }
 }

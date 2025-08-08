@@ -8,10 +8,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import helpers.URLs;
 import helpers.UsefulMethods;
 import org.json.JSONObject;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -29,6 +26,7 @@ public class AddNewPetTest {
     private static MediaType mediaType;
     private static ObjectMapper objectMapper = new ObjectMapper();
     JSONObject jsonObject;
+    private static long erasableID;
 
 //    private static final HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
 
@@ -53,7 +51,7 @@ public class AddNewPetTest {
 
         int statusCode = response.code();
 
-        UsefulMethods.deletePetByPetID(pet.getId());
+        erasableID = pet.getId();
 
         assertThat(statusCode).isEqualTo(200);
     }
@@ -77,7 +75,7 @@ public class AddNewPetTest {
         writer = objectMapper.writerWithDefaultPrettyPrinter();
         String expectedResponseBody = writer.writeValueAsString(json);
 
-        UsefulMethods.deletePetByPetID(pet.getId());
+        erasableID = pet.getId();
 
         assertThat(actualResponseBody).isEqualTo(expectedResponseBody);
     }
@@ -105,7 +103,7 @@ public class AddNewPetTest {
 
         int statusCode = response.code();
 
-        UsefulMethods.deletePetByPetID(pet.getId());
+        erasableID = pet.getId();
 
         assertThat(statusCode).isEqualTo(400);
     }
@@ -130,7 +128,7 @@ public class AddNewPetTest {
 
         int statusCode = response.code();
 
-        UsefulMethods.deletePetByPetID(pet.getId());
+        erasableID = pet.getId();
 
         assertThat(statusCode).isEqualTo(400);
     }
@@ -147,7 +145,6 @@ public class AddNewPetTest {
 
         String jsonPet = objectMapper.writeValueAsString(pet);
 
-
         RequestBody requestBody = RequestBody.create(jsonPet, mediaType);
         request = new Request.Builder().url(URLs.URL).post(requestBody).build();
         response = httpClient.newCall(request).execute();
@@ -156,8 +153,13 @@ public class AddNewPetTest {
 
         jsonObject = new JSONObject(response.body().string());
 
-        UsefulMethods.deletePetByPetID(jsonObject.getLong("id"));
+        erasableID = jsonObject.getLong("id");
 
         assertThat(statusCode).isEqualTo(200);
+    }
+
+    @AfterEach
+    public void deletePet() throws IOException {
+        UsefulMethods.deletePetByPetID(erasableID);
     }
 }
